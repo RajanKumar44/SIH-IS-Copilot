@@ -1,0 +1,133 @@
+@import 'tailwindcss';
+@import '@xyflow/react/dist/style.css';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Brand: deep navy primary, saffron accent, slate neutrals */
+  --color-navy-50: #eef2f9;
+  --color-navy-100: #d8e0f0;
+  --color-navy-200: #b3c2e0;
+  --color-navy-300: #7f97c6;
+  --color-navy-400: #4d6ba8;
+  --color-navy-500: #2a4a8a;
+  --color-navy-600: #1c3a75;
+  --color-navy-700: #142d5e;
+  --color-navy-800: #0b2545;
+  --color-navy-900: #071a33;
+
+  --color-saffron-50: #fff5eb;
+  --color-saffron-100: #ffe6cc;
+  --color-saffron-200: #ffcb99;
+  --color-saffron-300: #ffab5c;
+  --color-saffron-400: #f7902f;
+  --color-saffron-500: #e8772e;
+  --color-saffron-600: #c75f1c;
+  --color-saffron-700: #9e4a14;
+
+  --color-surface: #f6f8fb;
+  --color-surface-raised: #ffffff;
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-line: #e2e8f0;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-card-hover: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
+  --shadow-pop: 0 12px 32px rgb(15 23 42 / 0.16);
+
+  --radius-card: 14px;
+
+  --animate-fade-up: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-surface text-ink font-sans text-[14px] leading-relaxed;
+  }
+  ::selection {
+    @apply bg-navy-200 text-navy-900;
+  }
+  h1, h2, h3, h4 {
+    @apply font-semibold tracking-tight text-ink;
+  }
+  button, [role='button'] {
+    cursor: pointer;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-navy-400 ring-offset-2 ring-offset-surface;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface-raised border border-line rounded-card shadow-card;
+  }
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-card-hover hover:border-navy-200 hover:-translate-y-px;
+  }
+  .label-caps {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted;
+  }
+  .skeleton {
+    @apply rounded-md bg-[linear-gradient(90deg,#eef1f6_0%,#e2e8f0_50%,#eef1f6_100%)] bg-[length:200%_100%] animate-shimmer;
+  }
+  .prose-lite p { @apply mb-2; }
+  .prose-lite ul { @apply list-disc pl-5 mb-2 space-y-1; }
+  .prose-lite strong { @apply font-semibold text-ink; }
+  .prose-lite h2 { @apply text-base font-semibold mt-4 mb-2; }
+  .prose-lite h3 { @apply text-sm font-semibold mt-3 mb-1; }
+  .prose-lite code { @apply font-mono text-[12px] bg-navy-50 px-1 py-0.5 rounded; }
+}
+
+/* React Flow theming */
+.react-flow__attribution { display: none; }
+.react-flow__controls {
+  box-shadow: var(--shadow-card) !important;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.react-flow__controls button {
+  background: #fff !important;
+  border-bottom: 1px solid var(--color-line) !important;
+  color: var(--color-ink) !important;
+}
+.react-flow__edge-path { stroke-width: 1.5; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--color-saffron-500) !important; stroke-width: 2.5; }
+.react-flow__edge-textbg { fill: #fff; }
+.react-flow__edge-text { font-size: 10px; fill: var(--color-ink-muted); font-family: var(--font-sans); }
+.react-flow__minimap { border-radius: 10px; border: 1px solid var(--color-line); }
