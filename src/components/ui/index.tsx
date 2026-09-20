@@ -10,12 +10,12 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'accent' | 'danger' | 'subtle
 type Size = 'xs' | 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-primary text-primary-fg hover:bg-primary-hover shadow-sm disabled:opacity-50',
-  accent: 'bg-accent text-accent-fg hover:bg-accent-hover shadow-sm disabled:opacity-50',
-  secondary: 'bg-surface-raised text-ink border border-line hover:border-line-strong hover:bg-soft disabled:opacity-50',
+  primary: 'bg-primary text-primary-fg hover:bg-primary/90 shadow-sm disabled:opacity-50',
+  accent: 'bg-accent text-accent-fg hover:bg-accent/90 shadow-sm disabled:opacity-50',
+  secondary: 'bg-surface-sunken text-ink border border-line hover:bg-soft disabled:opacity-50',
   subtle: 'bg-soft text-soft-fg hover:bg-soft-hover disabled:opacity-50',
   ghost: 'text-ink-muted hover:bg-soft hover:text-ink disabled:opacity-50',
-  danger: 'bg-signal-risk text-white hover:opacity-90 disabled:opacity-50',
+  danger: 'bg-signal-risk text-white hover:bg-signal-risk/90 disabled:opacity-50 shadow-sm',
 };
 const SIZES: Record<Size, string> = {
   xs: 'h-7 px-2 text-[12px] gap-1',
@@ -69,7 +69,7 @@ export function Badge({ tone = 'slate', className, children, ...rest }: HTMLAttr
   return (
     <span
       className={cx(
-        'inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold ring-1 ring-inset whitespace-nowrap',
+        'inline-flex h-5 items-center justify-center gap-1 rounded-md px-2 text-[11px] font-semibold ring-1 ring-inset whitespace-nowrap transition-colors',
         TONES[tone],
         className,
       )}
@@ -84,7 +84,7 @@ export function Badge({ tone = 'slate', className, children, ...rest }: HTMLAttr
 
 export function Card({ className, children, hover, ...rest }: HTMLAttributes<HTMLDivElement> & { hover?: boolean }) {
   return (
-    <div className={cx('card', hover && 'card-hover', className)} {...rest}>
+    <div className={cx('card content-card', hover && 'card-hover', className)} {...rest}>
       {children}
     </div>
   );
@@ -172,7 +172,7 @@ export function CardSkeleton({ lines = 3 }: { lines?: number }) {
 
 export function EmptyState({ icon, title, description, action }: { icon?: ReactNode; title: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="card p-10 text-center animate-fade-in">
+    <div className="card empty-state p-10 text-center animate-fade-in">
       <div className="mx-auto mb-3 grid size-12 place-items-center rounded-full bg-soft text-soft-fg">{icon ?? <Inbox className="size-5" />}</div>
       <h3 className="text-[15px] font-semibold">{title}</h3>
       {description && <p className="mt-1 text-[13px] text-ink-muted max-w-md mx-auto">{description}</p>}

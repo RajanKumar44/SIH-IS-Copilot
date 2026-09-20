@@ -36,7 +36,7 @@ export function OutdatedTable({ items, onOpenStandard }: { items: OutdatedRefere
                 </td>
                 <td>
                   {o.standardId ? (
-                    <button onClick={() => onOpenStandard(o.standardId!)} className="text-left font-medium text-navy-700 hover:underline">
+                    <button onClick={() => onOpenStandard(o.standardId!)} className="text-left font-medium text-primary hover:underline">
                       {o.indexedLatestLabel}
                     </button>
                   ) : (

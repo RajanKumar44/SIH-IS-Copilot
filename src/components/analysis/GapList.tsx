@@ -37,7 +37,7 @@ export function GapCard({ gap, lookup, onOpenStandard }: { gap: GapFinding; look
                   <ul className="space-y-0.5">
                     {related.map((r) => (
                       <li key={r.standard.id}>
-                        <button onClick={() => onOpenStandard(r.standard.id)} className="text-left hover:text-navy-700">
+                        <button onClick={() => onOpenStandard(r.standard.id)} className="text-left hover:text-primary">
                           <span className="font-mono font-medium">{r.standard.number}</span> <span className="text-ink-muted">— {r.standard.title}</span>
                         </button>
                       </li>

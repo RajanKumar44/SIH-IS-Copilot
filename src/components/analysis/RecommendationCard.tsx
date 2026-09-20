@@ -28,15 +28,15 @@ export function RecommendationCard({
   for (const r of rec.relationships) groups.set(r.type, [...(groups.get(r.type) ?? []), r]);
 
   return (
-    <article className={cx('card card-hover overflow-hidden animate-fade-up', open && 'ring-1 ring-navy-200')} style={{ animationDelay: `${(rank ?? 0) * 40}ms` }}>
+    <article className={cx('card card-hover overflow-hidden animate-fade-up', open && 'ring-1 ring-primary/30')} style={{ animationDelay: `${(rank ?? 0) * 40}ms` }}>
       <button className="w-full text-left p-5" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
         <div className="flex items-start gap-4">
           {rank !== undefined && (
-            <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-navy-800 font-mono text-[13px] font-semibold text-white">{rank + 1}</div>
+            <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary font-mono text-[13px] font-semibold text-primary-fg">{rank + 1}</div>
           )}
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-[15px] font-semibold text-navy-800">{s.number}</span>
+              <span className="font-mono text-[15px] font-semibold text-ink">{s.number}</span>
               <ConfidencePill c={rec.confidence} />
               <Badge tone={CATEGORY_TONE[s.category]}>{CATEGORY_LABELS[s.category]}</Badge>
               <Badge tone="slate">{SECTOR_LABELS[s.sector]}</Badge>
@@ -69,7 +69,7 @@ export function RecommendationCard({
             <ul className="space-y-1.5">
               {rec.reasons.map((r, i) => (
                 <li key={i} className="flex gap-2 text-[13px]">
-                  <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-navy-400" />
+                  <span className="mt-[7px] size-1.5 shrink-0 rounded-full bg-primary/60" />
                   <span>{r}</span>
                 </li>
               ))}
@@ -109,8 +109,8 @@ export function RecommendationCard({
               {rec.certifications.length ? (
                 <ul className="space-y-2 text-[13px]">
                   {rec.certifications.map((c) => (
-                    <li key={c.certification.id} className="rounded-lg border border-saffron-200 bg-saffron-50 p-2.5">
-                      <div className="flex items-center gap-2 font-medium text-saffron-700">
+                    <li key={c.certification.id} className="rounded-lg border border-saffron-200 bg-saffron-50/50 dark:border-saffron-900 dark:bg-saffron-900/20 p-2.5">
+                      <div className="flex items-center gap-2 font-medium text-saffron-700 dark:text-saffron-400">
                         <FileBadge2 className="size-4" /> {c.certification.name}
                       </div>
                       <div className="mt-0.5 text-[12px] text-ink-muted">{APPLICABILITY_LABELS[c.applicability]} · {c.evidence}</div>
@@ -128,15 +128,15 @@ export function RecommendationCard({
               <h4 className="label-caps mb-2">Related &amp; allied standards</h4>
               <div className="grid gap-2 sm:grid-cols-2">
                 {[...groups.entries()].map(([type, list]) => (
-                  <div key={type} className="rounded-lg border border-line bg-white p-3">
+                  <div key={type} className="rounded-lg border border-line bg-surface-raised p-3 shadow-sm">
                     <Badge tone={RELATIONSHIP_TONE[type as keyof typeof RELATIONSHIP_TONE]} className="mb-2">
                       <Link2 className="size-3" /> {RELATIONSHIP_LABELS[type as keyof typeof RELATIONSHIP_LABELS]}
                     </Badge>
                     <ul className="space-y-1">
                       {list.map((r) => (
                         <li key={r.standard.id}>
-                          <button onClick={() => onOpenStandard(r.standard.id)} className="group text-left text-[13px] hover:text-navy-700">
-                            <span className="font-mono font-medium">{r.standard.number}</span> <span className="text-ink-muted group-hover:text-navy-600">— {r.standard.title}</span>
+                          <button onClick={() => onOpenStandard(r.standard.id)} className="group text-left text-[13px] hover:text-primary">
+                            <span className="font-mono font-medium">{r.standard.number}</span> <span className="text-ink-muted group-hover:text-primary/80">— {r.standard.title}</span>
                           </button>
                         </li>
                       ))}
@@ -153,7 +153,7 @@ export function RecommendationCard({
           </section>
 
           <div className="flex justify-end">
-            <button onClick={() => onOpenStandard(s.id)} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-navy-700 hover:underline">
+            <button onClick={() => onOpenStandard(s.id)} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:underline">
               Open standard details <ExternalLink className="size-3.5" />
             </button>
           </div>

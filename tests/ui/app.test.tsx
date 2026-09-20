@@ -47,16 +47,13 @@ describe('IS Copilot UI', () => {
     localStorage.clear();
   });
 
-  it('renders the dashboard with hero, examples and live system status', async () => {
+  it('renders the dashboard with its primary actions and live system status', async () => {
     await renderAt('/');
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Find the right Indian Standards/);
-    expect(screen.getByRole('button', { name: /Analyze Standards/ })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /Upload Tender/ })).toBeEnabled();
-    expect(screen.getByText('LED street lighting')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Make every tender easier/);
+    expect(screen.getByRole('link', { name: /Start an analysis/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Upload tender/ })).toBeInTheDocument();
     await waitFor(() => expect(screen.getAllByText(/Demo mode/).length).toBeGreaterThan(0));
-    expect(screen.getByText(/61 standards indexed/)).toBeInTheDocument();
-    expect(screen.getByText(/No analyses yet/)).toBeInTheDocument();
-    expect(screen.getByText(/Demo data notice/)).toBeInTheDocument();
+    expect(await screen.findByText(/No analyses yet/)).toBeInTheDocument();
   });
 
   it('shows empty states on analysis-dependent pages and a 404 page', async () => {
@@ -83,17 +80,16 @@ describe('IS Copilot UI', () => {
     await renderAt('/');
     const nav = screen.getByRole('navigation');
     await user.click(within(nav).getByRole('link', { name: /Analyze Specification/ }));
-    expect(await screen.findByRole('heading', { level: 1, name: /Analyze a specification/ })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: /Turn a procurement brief into standards-ready evidence/ })).toBeInTheDocument();
     await user.click(within(nav).getByRole('link', { name: /Standards Explorer/ }));
     expect(await screen.findByRole('heading', { level: 1, name: /Standards Explorer/ })).toBeInTheDocument();
-    await user.click(within(nav).getByRole('link', { name: /Upload Tender/ }));
-    expect(await screen.findByRole('heading', { level: 1, name: /Upload a tender/ })).toBeInTheDocument();
     await user.click(within(nav).getByRole('link', { name: /Search History/ }));
     expect(await screen.findByRole('heading', { level: 1, name: /Search History/ })).toBeInTheDocument();
   });
 
   it('runs the judge demo flow: analyze → results → certification → gaps → graph → spec → history', async () => {
     await renderAt('/');
+    await user.click(screen.getByRole('link', { name: /Start an analysis/ }));
     await user.click(screen.getByText('LED street lighting'));
     const textarea = screen.getByLabelText(/Describe the product/) as HTMLTextAreaElement;
     expect(textarea.value).toMatch(/LED street lighting system/);

@@ -29,7 +29,7 @@ export function ExplorerPage() {
     <div className="space-y-5">
       <PageHeader eyebrow="Explorer" title="Standards Explorer" description={`Browse and filter the indexed dataset${facets ? ` (${facets.total} standards)` : ''}. Select a standard to inspect its scope, versions, relationships and certification mappings.`} />
 
-      <Card className="p-3">
+      <Card className="depth-card p-3">
         <div className="flex flex-wrap items-center gap-2">
           <label className="relative min-w-[240px] flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted" />
@@ -37,11 +37,11 @@ export function ExplorerPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Search by number, title, keyword… e.g. 10322, cable, IP code"
-              className="h-10 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13.5px] outline-none focus:border-navy-400 focus:bg-white"
+              className="h-10 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-[13.5px] outline-none focus:border-primary focus:bg-surface-raised"
               aria-label="Search standards"
             />
           </label>
-          <select value={query.sort} onChange={(e) => set({ sort: e.target.value as StandardsQuery['sort'] })} className="h-10 rounded-lg border border-line bg-white px-3 text-[13px]" aria-label="Sort">
+          <select value={query.sort} onChange={(e) => set({ sort: e.target.value as StandardsQuery['sort'] })} className="h-10 rounded-lg border border-line bg-surface-raised px-3 text-[13px]" aria-label="Sort">
             <option value="number">Sort: Number</option>
             <option value="title">Sort: Title</option>
             <option value="year">Sort: Latest edition</option>
@@ -58,7 +58,7 @@ export function ExplorerPage() {
             <Select label="Certification" value={query.certification ?? ''} onChange={(v) => set({ certification: v || undefined })} options={facets.certifications.map((c) => ({ value: c.value, label: c.label }))} />
             <label className="text-[12px]">
               <span className="label-caps block mb-1">Product type</span>
-              <input value={query.productType ?? ''} onChange={(e) => set({ productType: e.target.value || undefined })} placeholder="e.g. luminaire" className="h-9 w-full rounded-lg border border-line px-2.5 text-[13px]" />
+              <input value={query.productType ?? ''} onChange={(e) => set({ productType: e.target.value || undefined })} placeholder="e.g. luminaire" className="h-9 w-full rounded-lg border border-line bg-surface-sunken px-2.5 text-[13px] outline-none focus:border-primary" />
             </label>
           </div>
         )}
@@ -76,9 +76,9 @@ export function ExplorerPage() {
       {data && data.items.length > 0 && (
         <div className={cx('grid gap-3 md:grid-cols-2 transition-opacity', loading && 'opacity-60')}>
           {data.items.map((s, i) => (
-            <button key={s.id} onClick={() => drawer.open(s.id)} className="card card-hover p-4 text-left animate-fade-up" style={{ animationDelay: `${i * 25}ms` }}>
+            <button key={s.id} onClick={() => drawer.open(s.id)} className="card depth-card card-hover p-4 text-left animate-fade-up" style={{ animationDelay: `${i * 25}ms` }}>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[14px] font-semibold text-navy-800">{s.number}</span>
+                <span className="font-mono text-[14px] font-semibold text-ink">{s.number}</span>
                 <Badge tone={CATEGORY_TONE[s.category]}>{CATEGORY_LABELS[s.category]}</Badge>
                 <Badge tone="slate">{SECTOR_LABELS[s.sector]}</Badge>
                 {s.revisionStatus === 'superseded' && <Badge tone="rose">superseded</Badge>}
@@ -123,7 +123,7 @@ function Select({ label, value, onChange, options }: { label: string; value: str
   return (
     <label className="text-[12px]">
       <span className="label-caps block mb-1">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="h-9 w-full rounded-lg border border-line bg-white px-2.5 text-[13px]">
+      <select value={value} onChange={(e) => onChange(e.target.value)} className="h-9 w-full rounded-lg border border-line bg-surface-sunken px-2.5 text-[13px] outline-none focus:border-primary">
         <option value="">All</option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>

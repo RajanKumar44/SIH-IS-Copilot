@@ -25,7 +25,7 @@ export function StandardDetailDrawer({ id, onClose, onNavigate }: { id: string |
       title={
         s ? (
           <div>
-            <div className="font-mono text-[15px] font-semibold text-navy-800">{s.number}</div>
+            <div className="font-mono text-[15px] font-semibold text-ink">{s.number}</div>
             <div className="text-[13px] text-ink-muted line-clamp-1">{s.title}</div>
           </div>
         ) : (
@@ -132,8 +132,8 @@ export function StandardDetailDrawer({ id, onClose, onNavigate }: { id: string |
                     <ul className="space-y-1">
                       {list.map((r) => (
                         <li key={`${r.standard.id}-${r.direction}`}>
-                          <button onClick={() => onNavigate(r.standard.id)} className="group text-left text-[13px] hover:text-navy-700">
-                            <span className="font-mono font-medium">{r.standard.number}</span> <span className="text-ink-muted group-hover:text-navy-600">— {r.standard.title}</span>
+                          <button onClick={() => onNavigate(r.standard.id)} className="group text-left text-[13px] hover:text-primary">
+                            <span className="font-mono font-medium">{r.standard.number}</span> <span className="text-ink-muted group-hover:text-primary/80">— {r.standard.title}</span>
                             {r.note && <span className="block text-[11.5px] text-ink-muted">{r.note}</span>}
                           </button>
                         </li>

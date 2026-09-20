@@ -53,12 +53,12 @@ export function GapsPage() {
 
       <div className="grid gap-3 sm:grid-cols-4">
         {(['high', 'medium', 'low'] as GapSeverity[]).map((s) => (
-          <button key={s} onClick={() => setSeverity(severity === s ? 'all' : s)} className={cx('card card-hover p-4 text-left', severity === s && 'ring-2 ring-navy-300')}>
+          <button key={s} onClick={() => setSeverity(severity === s ? 'all' : s)} className={cx('card depth-card card-hover p-4 text-left', severity === s && 'ring-2 ring-primary')}>
             <div className="label-caps">{s} priority</div>
-            <div className={cx('mt-1 text-2xl font-bold', s === 'high' ? 'text-rose-700' : s === 'medium' ? 'text-amber-700' : 'text-slate-600')}>{counts[s]}</div>
+            <div className={cx('mt-1 text-2xl font-bold', s === 'high' ? 'text-signal-risk' : s === 'medium' ? 'text-amber-500' : 'text-muted-fg')}>{counts[s]}</div>
           </button>
         ))}
-        <Card className="p-4">
+        <Card className="depth-card p-4">
           <div className="label-caps">By type</div>
           <ul className="mt-1 space-y-0.5 text-[12px]">
             {[...byType.entries()].slice(0, 4).map(([t, n]) => (
@@ -72,14 +72,16 @@ export function GapsPage() {
         </Card>
       </div>
 
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        tabs={[
-          { id: 'gaps', label: 'Potential gaps', count: analysis.gaps.length },
-          { id: 'outdated', label: 'Outdated reference check', count: analysis.outdated.length },
-        ]}
-      />
+      <div className="surface-strip px-2">
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { id: 'gaps', label: 'Potential gaps', count: analysis.gaps.length },
+            { id: 'outdated', label: 'Outdated reference check', count: analysis.outdated.length },
+          ]}
+        />
+      </div>
       <DisclaimerBar text="Findings are potential issues detected against indexed metadata. Wording such as “potential gap” and “consider reviewing” is intentional — nothing here establishes a legal obligation." />
 
       {tab === 'gaps' && <GapList gaps={gaps} lookup={lookup} onOpenStandard={drawer.open} />}

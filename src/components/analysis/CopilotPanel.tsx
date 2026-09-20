@@ -52,7 +52,7 @@ export function CopilotPanel({ open, onClose }: { open: boolean; onClose: () => 
       width="max-w-lg"
       title={
         <div className="flex items-center gap-2">
-          <div className="grid size-8 place-items-center rounded-lg bg-navy-800 text-white">
+          <div className="grid size-8 place-items-center rounded-lg bg-primary text-primary-fg">
             <Sparkles className="size-4" />
           </div>
           <div>
@@ -77,7 +77,7 @@ export function CopilotPanel({ open, onClose }: { open: boolean; onClose: () => 
               </p>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {SUGGESTIONS.map((s) => (
-                  <button key={s} onClick={() => ask(s)} className="rounded-full border border-line bg-white px-3 py-1 text-[12px] hover:border-navy-300 hover:text-navy-800">
+                  <button key={s} onClick={() => ask(s)} className="rounded-full border border-line bg-surface-raised px-3 py-1 text-[12px] shadow-sm hover:border-primary hover:text-ink">
                     {s}
                   </button>
                 ))}
@@ -87,11 +87,11 @@ export function CopilotPanel({ open, onClose }: { open: boolean; onClose: () => 
           {messages.map((m, i) => (
             <div key={i} className={cx('flex gap-2.5', m.role === 'user' && 'justify-end')}>
               {m.role === 'assistant' && (
-                <div className="grid size-7 shrink-0 place-items-center rounded-full bg-navy-800 text-white">
+                <div className="grid size-7 shrink-0 place-items-center rounded-full bg-primary text-primary-fg">
                   <Bot className="size-3.5" />
                 </div>
               )}
-              <div className={cx('max-w-[85%] rounded-2xl px-3.5 py-2.5', m.role === 'user' ? 'bg-navy-800 text-white rounded-br-sm' : 'bg-surface border border-line rounded-bl-sm')}>
+              <div className={cx('max-w-[85%] rounded-2xl px-3.5 py-2.5', m.role === 'user' ? 'bg-primary text-primary-fg rounded-br-sm' : 'bg-surface border border-line rounded-bl-sm')}>
                 {m.role === 'user' ? <p className="text-[13.5px]">{m.content}</p> : <Markdown text={m.content} />}
                 {m.citations && m.citations.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
@@ -112,14 +112,14 @@ export function CopilotPanel({ open, onClose }: { open: boolean; onClose: () => 
           ))}
           {busy && (
             <div className="flex items-center gap-2 text-[12px] text-ink-muted">
-              <span className="size-1.5 animate-pulse-soft rounded-full bg-navy-500" /> Retrieving evidence…
+              <span className="size-1.5 animate-pulse-soft rounded-full bg-primary" /> Retrieving evidence…
             </div>
           )}
           {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-[12px] text-rose-700">{error}</p>}
           <div ref={bottom} />
         </div>
         <form
-          className="sticky bottom-0 mt-4 flex gap-2 border-t border-line bg-white pt-3"
+          className="sticky bottom-0 mt-4 flex gap-2 border-t border-line bg-surface pt-3"
           onSubmit={(e) => {
             e.preventDefault();
             void ask(input);
@@ -129,7 +129,7 @@ export function CopilotPanel({ open, onClose }: { open: boolean; onClose: () => 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about recommendations, gaps, tests, certification…"
-            className="h-10 flex-1 rounded-lg border border-line px-3 text-[13px] outline-none focus:border-navy-400"
+            className="h-10 flex-1 rounded-lg border border-line px-3 text-[13px] outline-none focus:border-primary"
             aria-label="Ask the assistant"
           />
           <Button type="submit" size="md" loading={busy} disabled={!input.trim()}>

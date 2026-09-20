@@ -31,8 +31,8 @@ export function EvidenceList({ evidence, source }: { evidence: Evidence[]; sourc
       {evidence.length ? (
         <ul className="space-y-1.5">
           {evidence.map((e) => (
-            <li key={e.id} className="flex gap-2 rounded-lg border border-line bg-white p-2.5 text-[13px]">
-              <Quote className="size-3.5 mt-0.5 shrink-0 text-navy-400" />
+            <li key={e.id} className="flex gap-2 rounded-lg border border-line bg-surface-raised p-2.5 text-[13px]">
+              <Quote className="size-3.5 mt-0.5 shrink-0 text-primary/50" />
               <div className="min-w-0 flex-1">
                 <span className="text-ink">{e.snippet}</span>
                 <div className="mt-1 flex items-center gap-2 text-[11px] text-ink-muted">

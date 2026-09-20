@@ -82,29 +82,32 @@ export function ResultsPage() {
         }
       />
 
-      <SummaryCard a={a} />
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Kpi label="Primary standards" value={a.summary.primaryCount} />
-        <Kpi label="Related standards" value={a.summary.relatedCount} />
-        <Kpi label="Certification mappings" value={a.summary.certificationCount} />
-        <Kpi label="Potential gaps" value={a.summary.gapCount} tone={a.summary.gapCount ? 'amber' : 'emerald'} />
-        <Kpi label="Outdated references" value={outdatedFlagged} tone={outdatedFlagged ? 'rose' : 'emerald'} />
+      <div className="results-bento">
+        <SummaryCard a={a} />
+        <div className="results-metrics">
+          <Kpi label="Primary standards" value={a.summary.primaryCount} />
+          <Kpi label="Related standards" value={a.summary.relatedCount} />
+          <Kpi label="Certification mappings" value={a.summary.certificationCount} />
+          <Kpi label="Potential gaps" value={a.summary.gapCount} tone={a.summary.gapCount ? 'amber' : 'emerald'} />
+          <Kpi label="Outdated references" value={outdatedFlagged} tone={outdatedFlagged ? 'rose' : 'emerald'} />
+        </div>
       </div>
 
-      <Tabs
-        value={tab}
-        onChange={setTab}
-        tabs={[
-          { id: 'recommended', label: 'Top Recommended', count: a.recommendations.length },
-          { id: 'related', label: 'Related Standards', count: a.related.length },
-          { id: 'certification', label: 'Certification', count: a.summary.certificationCount },
-          { id: 'gaps', label: 'Potential Gaps', count: a.gaps.length },
-          { id: 'outdated', label: 'Outdated References', count: a.outdated.length },
-          { id: 'evidence', label: 'Evidence' },
-          { id: 'graph', label: 'Knowledge Graph' },
-        ]}
-      />
+      <div className="surface-strip px-2">
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { id: 'recommended', label: 'Top Recommended', count: a.recommendations.length },
+            { id: 'related', label: 'Related Standards', count: a.related.length },
+            { id: 'certification', label: 'Certification', count: a.summary.certificationCount },
+            { id: 'gaps', label: 'Potential Gaps', count: a.gaps.length },
+            { id: 'outdated', label: 'Outdated References', count: a.outdated.length },
+            { id: 'evidence', label: 'Evidence' },
+            { id: 'graph', label: 'Knowledge Graph' },
+          ]}
+        />
+      </div>
 
       <ErrorBoundary label="Results panel">
         {tab === 'recommended' &&
@@ -145,7 +148,7 @@ export function ResultsPage() {
             {a.recommendations.map((r) => (
               <Card key={r.standard.id} className="p-5">
                 <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <span className="font-mono font-semibold text-navy-800">{r.standard.number}</span>
+                  <span className="font-mono font-semibold text-ink">{r.standard.number}</span>
                   <ConfidencePill c={r.confidence} />
                   <span className="text-[13px] text-ink-muted">{r.standard.title}</span>
                 </div>
@@ -172,14 +175,14 @@ export function ResultsPage() {
 
 function SummaryCard({ a }: { a: AnalysisResult }) {
   return (
-    <Card className="p-5 animate-fade-up">
+    <Card className="depth-card p-5 animate-fade-up">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="label-caps mb-1">Analysis summary</div>
           <div className="text-[17px] font-semibold">{a.summary.productDescription}</div>
           <p className="mt-1 text-[13px] text-ink-muted line-clamp-3">{a.input.original}</p>
           {a.input.translationNote && (
-            <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-navy-50 px-2 py-1 text-[12px] text-navy-700">
+            <p className="mt-1.5 inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-[12px] text-ink">
               <Languages className="size-3.5" /> {a.input.translationNote} <span className="text-ink-muted">→ “{a.input.normalized.slice(0, 100)}{a.input.normalized.length > 100 ? '…' : ''}”</span>
             </p>
           )}
@@ -203,9 +206,9 @@ function SummaryCard({ a }: { a: AnalysisResult }) {
 }
 
 function Kpi({ label, value, tone = 'navy' }: { label: string; value: number; tone?: 'navy' | 'amber' | 'rose' | 'emerald' }) {
-  const color = { navy: 'text-navy-800', amber: 'text-amber-700', rose: 'text-rose-700', emerald: 'text-emerald-700' }[tone];
+  const color = { navy: 'text-ink', amber: 'text-amber-700', rose: 'text-rose-700', emerald: 'text-emerald-700' }[tone];
   return (
-    <Card className="p-4 animate-fade-up">
+    <Card className="depth-card p-4 animate-fade-up">
       <div className="label-caps">{label}</div>
       <div className={`mt-1 text-2xl font-bold ${color}`}>{value}</div>
     </Card>

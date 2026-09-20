@@ -1,37 +1,81 @@
-import { Languages, ListChecks, Ruler, ShieldAlert } from 'lucide-react';
+import { lazy, Suspense, useState } from 'react';
+import { ArrowRight, FileSearch, FileText, ShieldCheck, Sparkles, Type } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
 import { SearchHero } from '@/components/analysis/SearchHero';
-import { Card } from '@/components/ui';
+import { CardSkeleton, cx } from '@/components/ui';
+
+// PDF.js is sizeable. Keep the document workspace out of the text-analysis
+// route until the user explicitly chooses the upload tab.
+const UploadPage = lazy(() => import('./UploadPage').then((m) => ({ default: m.UploadPage })));
 
 export function AnalyzePage() {
+  const [activeTab, setActiveTab] = useState<'text' | 'document'>('text');
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto animate-fade-in">
       <PageHeader
-        eyebrow="Analyze"
-        title="Analyze a specification"
-        description="Enter a natural-language description or paste technical specifications / tender clauses. The engine extracts requirements, retrieves standards semantically, expands relationships and flags gaps."
+        eyebrow="Analysis"
+        title="Turn a procurement brief into standards-ready evidence"
+        description="Describe a product requirement or upload a tender document to identify applicable Indian Standards, related references, certification signals, and procurement gaps."
       />
-      <SearchHero />
-      <div className="grid gap-4 md:grid-cols-3">
-        <Tip icon={<Ruler className="size-4" />} title="Include ratings and conditions" text="Wattage, voltage, IP/IK, material, grade, environment and quantity improve requirement coverage and confidence." />
-        <Tip icon={<ListChecks className="size-4" />} title="Paste existing clauses" text="If your draft already cites standards (e.g. “as per IS 694:1990”), the outdated-reference detector compares editions with the index." />
-        <Tip icon={<Languages className="size-4" />} title="Hindi and Hinglish work too" text="Queries are normalised to English concepts for retrieval while the original wording is preserved in the report." />
+
+      <section className="depth-card overflow-hidden rounded-xl border border-line bg-surface-raised">
+        <div className="flex items-center gap-2 border-b border-line bg-surface-sunken px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted"><Sparkles className="size-3.5 text-primary" /> Procurement intelligence workflow</div>
+        <div className="grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <WorkflowStep number="01" icon={Type} title="Describe" detail="Product, technical requirement, or tender scope" />
+          <WorkflowStep number="02" icon={FileSearch} title="Inspect" detail="Relevant IS, relationships, and requirements" />
+          <WorkflowStep number="03" icon={ShieldCheck} title="Prepare" detail="Compliance review and tender-ready draft" terminal />
+        </div>
+      </section>
+
+      <div className="surface-strip flex border-b-0 px-2">
+        <TabButton 
+          active={activeTab === 'text'} 
+          onClick={() => setActiveTab('text')} 
+          icon={Type} 
+          label="Text Input" 
+        />
+        <TabButton 
+          active={activeTab === 'document'} 
+          onClick={() => setActiveTab('document')} 
+          icon={FileText} 
+          label="Upload Document" 
+        />
       </div>
-      <Card className="flex items-start gap-3 p-4 text-[12.5px] text-ink-muted">
-        <ShieldAlert className="mt-0.5 size-4 shrink-0 text-amber-600" />
-        <span>IS Copilot is an AI assistance system, not a legal or regulatory authority. Recommendations are based on indexed metadata and must be verified against the authoritative BIS sources before procurement use.</span>
-      </Card>
+
+      <div className={cx("transition-opacity duration-300", activeTab === 'text' ? 'block' : 'hidden')}>
+        <SearchHero />
+      </div>
+
+      <div className={cx("transition-opacity duration-300", activeTab === 'document' ? 'block' : 'hidden')}>
+        {activeTab === 'document' && (
+          <Suspense fallback={<CardSkeleton lines={3} />}>
+            <UploadPage inline />
+          </Suspense>
+        )}
+      </div>
     </div>
   );
 }
 
-function Tip({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+function WorkflowStep({ number, icon: Icon, title, detail, terminal = false }: { number: string; icon: LucideIcon; title: string; detail: string; terminal?: boolean }) {
+  return <div className="relative flex gap-3 p-4 sm:min-h-28"><span className="grid size-9 shrink-0 place-items-center rounded-lg bg-soft text-soft-fg"><Icon className="size-4" /></span><div><div className="mb-1 flex items-center gap-2"><span className="text-[10px] font-semibold tracking-[0.12em] text-primary">{number}</span><h2 className="text-[14px] font-semibold">{title}</h2></div><p className="max-w-48 text-[12px] leading-5 text-ink-muted">{detail}</p></div>{!terminal && <ArrowRight className="absolute right-3 top-1/2 hidden size-3.5 -translate-y-1/2 text-ink-subtle lg:block" />}</div>;
+}
+
+function TabButton({ active, onClick, icon: Icon, label }: { active: boolean; onClick: () => void; icon: LucideIcon; label: string }) {
   return (
-    <Card className="p-4">
-      <div className="flex items-center gap-2 text-[13px] font-semibold">
-        <span className="grid size-7 place-items-center rounded-md bg-navy-50 text-navy-700">{icon}</span> {title}
-      </div>
-      <p className="mt-1.5 text-[12.5px] text-ink-muted">{text}</p>
-    </Card>
+    <button
+      onClick={onClick}
+      className={cx(
+        "flex items-center gap-2 px-4 py-3 text-[14px] font-medium border-b-2 transition-colors",
+          active 
+          ? "border-primary text-primary" 
+          : "border-transparent text-ink-muted hover:text-ink hover:border-line-strong"
+      )}
+    >
+      <Icon className="size-4" />
+      {label}
+    </button>
   );
 }

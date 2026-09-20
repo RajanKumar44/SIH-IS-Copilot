@@ -8,7 +8,7 @@ import { Badge, Button, Card, ErrorState, cx } from '@/components/ui';
 
 type Stage = 'idle' | 'reading' | 'ready' | 'error';
 
-export function UploadPage() {
+export function UploadPage({ inline = false }: { inline?: boolean }) {
   const { status, runAnalysis, analysing } = useApp();
   const navigate = useNavigate();
   const [stage, setStage] = useState<Stage>('idle');
@@ -62,12 +62,14 @@ export function UploadPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Upload"
-        title="Upload a tender or specification PDF"
-        description={`Text is extracted in your browser (the PDF never leaves your device); only the extracted text is analysed. PDF only, up to ${maxMb} MB. Scanned PDFs need OCR, which is a pluggable port not configured in this build.`}
-      />
+    <div className={cx("space-y-6", !inline && "max-w-3xl mx-auto")}>
+      {!inline && (
+        <PageHeader
+          eyebrow="Upload"
+          title="Upload a tender or specification PDF"
+          description={`Text is extracted in your browser (the PDF never leaves your device); only the extracted text is analysed. PDF only, up to ${maxMb} MB. Scanned PDFs need OCR, which is a pluggable port not configured in this build.`}
+        />
+      )}
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 space-y-4">
@@ -79,11 +81,11 @@ export function UploadPage() {
             onDragLeave={() => setDragging(false)}
             onDrop={onDrop}
             className={cx(
-              'card flex min-h-[260px] flex-col items-center justify-center gap-3 border-2 border-dashed p-8 text-center transition-colors',
-              dragging ? 'border-navy-400 bg-navy-50' : 'border-line',
+              'card depth-card flex min-h-[260px] flex-col items-center justify-center gap-3 border-2 border-dashed p-8 text-center transition-colors',
+              dragging ? 'border-primary bg-primary/5' : 'border-line',
             )}
           >
-            <div className="grid size-14 place-items-center rounded-2xl bg-navy-50 text-navy-700">
+            <div className="grid size-14 place-items-center rounded-2xl bg-muted text-ink">
               <FileUp className="size-6" />
             </div>
             <div>
@@ -98,12 +100,12 @@ export function UploadPage() {
           </div>
 
           {stage === 'reading' && (
-            <Card className="p-4 animate-fade-in">
+            <Card className="depth-card p-4 animate-fade-in">
               <div className="flex items-center gap-2 text-[13px] font-medium">
-                <ScanText className="size-4 animate-pulse-soft text-navy-600" /> Extracting text… {progress.total ? `page ${progress.done} of ${progress.total}` : 'opening document'}
+                <ScanText className="size-4 animate-pulse-soft text-primary" /> Extracting text… {progress.total ? `page ${progress.done} of ${progress.total}` : 'opening document'}
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                <div className="h-full rounded-full bg-navy-500 transition-[width]" style={{ width: progress.total ? `${(progress.done / progress.total) * 100}%` : '10%' }} />
+                <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: progress.total ? `${(progress.done / progress.total) * 100}%` : '10%' }} />
               </div>
             </Card>
           )}
@@ -117,14 +119,14 @@ export function UploadPage() {
           )}
 
           {stage === 'ready' && extraction && (
-            <Card className="p-5 animate-fade-up">
+            <Card className="depth-card p-5 animate-fade-up">
               <div className="flex flex-wrap items-center gap-2">
                 <CheckCircle2 className="size-4 text-emerald-600" />
                 <span className="text-[14px] font-semibold">{extraction.fileName}</span>
                 <Badge tone="slate">{(extraction.sizeBytes / 1024).toFixed(0)} KB</Badge>
                 <Badge tone="slate">{extraction.pageCount} pages</Badge>
                 <Badge tone={extraction.pagesWithText < extraction.pageCount ? 'amber' : 'emerald'}>{extraction.pagesWithText} with text</Badge>
-                <button onClick={reset} className="ml-auto grid size-8 place-items-center rounded-md text-ink-muted hover:bg-navy-50" aria-label="Remove file">
+                <button onClick={reset} className="ml-auto grid size-8 place-items-center rounded-md text-ink-muted hover:bg-muted" aria-label="Remove file">
                   <X className="size-4" />
                 </button>
               </div>
@@ -149,18 +151,18 @@ export function UploadPage() {
         </div>
 
         <aside className="lg:col-span-2 space-y-3">
-          <Card className="p-4">
+          <Card className="depth-card p-4">
             <div className="label-caps mb-2">Processing pipeline</div>
             <ol className="space-y-2 text-[13px]">
               {['PDF → text extraction (pdf.js, in-browser)', 'Document preview & validation', 'Requirement & standard-reference extraction', 'Chunking → embeddings → vector retrieval', 'Reranking, relationship expansion, evidence', 'Gap analysis & outdated-reference detection'].map((s, i) => (
                 <li key={s} className="flex gap-2">
-                  <span className="grid size-5 shrink-0 place-items-center rounded-full bg-navy-800 font-mono text-[10px] text-white">{i + 1}</span>
+                  <span className="grid size-5 shrink-0 place-items-center rounded-full bg-primary font-mono text-[10px] text-primary-fg">{i + 1}</span>
                   <span>{s}</span>
                 </li>
               ))}
             </ol>
           </Card>
-          <Card className="p-4 text-[12.5px] text-ink-muted">
+          <Card className="depth-card p-4 text-[12.5px] text-ink-muted">
             <div className="mb-1 flex items-center gap-2 font-semibold text-ink">
               <FileText className="size-4" /> Handled cases
             </div>

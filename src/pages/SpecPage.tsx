@@ -101,8 +101,8 @@ export function SpecPage() {
       {error && <ErrorState message={error} onRetry={generate} />}
 
       {!spec && !busy && (
-        <Card className="p-8 text-center animate-fade-up">
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-saffron-50 text-saffron-600">
+        <Card className="depth-card p-8 text-center animate-fade-up">
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-saffron-50 text-saffron-600 dark:bg-saffron-900/20 dark:text-saffron-400">
             <FileText className="size-6" />
           </div>
           <h2 className="mt-3 text-lg font-semibold">Generate Standards-Ready Specification</h2>
@@ -126,7 +126,7 @@ export function SpecPage() {
       {spec && (
         <div className="space-y-4 print:space-y-2" id="spec-document">
           <DisclaimerBar text={spec.disclaimer} />
-          <Card className="p-6 print:border-0 print:shadow-none">
+          <Card className="depth-card p-6 print:border-0 print:shadow-none">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-xl font-bold">{spec.title}</h2>
               <Badge tone={spec.mode === 'live' ? 'emerald' : 'amber'}>{spec.mode === 'live' ? 'LLM-refined' : 'Template (demo)'}</Badge>
@@ -134,12 +134,12 @@ export function SpecPage() {
             <div className="mt-1 text-[12px] text-ink-muted">Generated {new Date(spec.createdAt).toLocaleString()} · analysis {spec.analysisId.slice(0, 8)}</div>
           </Card>
           {spec.sections.map((s) => (
-            <Card key={s.id} className="p-5 print:border-0 print:shadow-none animate-fade-up">
+            <Card key={s.id} className="depth-card p-5 print:border-0 print:shadow-none animate-fade-up">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h3 className="text-[15px] font-semibold">{s.title}</h3>
                 <button
                   onClick={() => setEditing(editing === s.id ? null : s.id)}
-                  className={cx('inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium print:hidden', editing === s.id ? 'bg-navy-800 text-white' : 'text-navy-700 hover:bg-navy-50')}
+                  className={cx('inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium print:hidden', editing === s.id ? 'bg-primary text-primary-fg' : 'text-primary hover:bg-muted')}
                 >
                   {editing === s.id ? (
                     <>
@@ -153,7 +153,7 @@ export function SpecPage() {
                 </button>
               </div>
               {editing === s.id ? (
-                <textarea value={s.content} onChange={(e) => update(s.id, e.target.value)} rows={Math.max(4, s.content.split('\n').length + 1)} className="w-full rounded-lg border border-line bg-surface p-3 font-mono text-[12.5px] leading-relaxed outline-none focus:border-navy-400" aria-label={`Edit ${s.title}`} />
+                <textarea value={s.content} onChange={(e) => update(s.id, e.target.value)} rows={Math.max(4, s.content.split('\n').length + 1)} className="w-full rounded-lg border border-line bg-surface-sunken p-3 font-mono text-[12.5px] leading-relaxed outline-none focus:border-primary" aria-label={`Edit ${s.title}`} />
               ) : (
                 <Markdown text={s.content} />
               )}

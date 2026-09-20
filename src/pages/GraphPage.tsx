@@ -42,9 +42,9 @@ export function GraphPage() {
         actions={
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Graph a specific standard…" className="h-10 w-64 rounded-lg border border-line bg-white pl-9 pr-3 text-[13px] outline-none focus:border-navy-400" aria-label="Find a standard to graph" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Graph a specific standard…" className="h-10 w-64 rounded-lg border border-line bg-surface-sunken pl-9 pr-3 text-[13px] outline-none focus:border-primary" aria-label="Find a standard to graph" />
             {suggestions.length > 0 && (
-              <ul className="absolute right-0 z-20 mt-1 w-80 overflow-hidden rounded-lg border border-line bg-white shadow-pop">
+              <ul className="absolute right-0 z-20 mt-1 w-80 overflow-hidden rounded-lg border border-line bg-surface-overlay shadow-pop">
                 {suggestions.map((s) => (
                   <li key={s.id}>
                     <button
@@ -52,7 +52,7 @@ export function GraphPage() {
                         setParams({ standard: s.id });
                         setSearch('');
                       }}
-                      className="w-full px-3 py-2 text-left text-[13px] hover:bg-navy-50"
+                      className="w-full px-3 py-2 text-left text-[13px] hover:bg-muted"
                     >
                       <span className="font-mono font-medium">{s.number}</span> <span className="text-ink-muted">— {s.title.slice(0, 60)}</span>
                     </button>
@@ -91,17 +91,19 @@ export function GraphPage() {
                 </Button>
               )}
             </div>
-            <ErrorBoundary label="Graph">
-              <StandardsGraph graph={graph} height={620} onSelect={setSelected} />
-            </ErrorBoundary>
+            <div className="graph-stage">
+              <ErrorBoundary label="Graph">
+                <StandardsGraph graph={graph} height={620} onSelect={setSelected} />
+              </ErrorBoundary>
+            </div>
             <GraphLegend />
           </div>
           <aside className="space-y-3">
-            <Card className="p-4">
+            <Card className="depth-card p-4">
               <div className="label-caps mb-2">Focused node</div>
               {selected ? (
                 <div className="animate-fade-in">
-                  <div className="font-mono text-[14px] font-semibold text-navy-800">{selected.label}</div>
+                  <div className="font-mono text-[14px] font-semibold text-ink">{selected.label}</div>
                   {selected.sublabel && <div className="mt-0.5 text-[13px]">{selected.sublabel}</div>}
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <Badge tone="navy">{selected.kind}</Badge>
@@ -125,7 +127,7 @@ export function GraphPage() {
                 <p className="text-[13px] text-ink-muted">Click any node to highlight its neighbourhood and see details here.</p>
               )}
             </Card>
-            <Card className="p-4 text-[12.5px] text-ink-muted">
+            <Card className="depth-card p-4 text-[12.5px] text-ink-muted">
               <div className="mb-1 font-semibold text-ink">Reading the graph</div>
               Solid navy edges show recommended primary standards. Coloured edges are typed relationships from the indexed dataset. Saffron nodes are certification schemes recorded for a standard.
             </Card>

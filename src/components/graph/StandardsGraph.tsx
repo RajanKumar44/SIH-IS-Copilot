@@ -35,10 +35,10 @@ const EDGE_COLORS: Record<RelationshipType | 'recommends' | 'certifies', string>
 };
 
 const KIND_STYLE: Record<GraphNode['kind'], string> = {
-  product: 'bg-navy-800 text-white border-navy-800',
-  primary: 'bg-white border-navy-400 text-ink',
-  related: 'bg-white border-line text-ink',
-  certification: 'bg-saffron-50 border-saffron-300 text-saffron-800',
+  product: 'bg-primary text-primary-fg border-primary',
+  primary: 'bg-surface-raised border-primary/60 text-ink',
+  related: 'bg-surface-raised border-line text-ink',
+  certification: 'bg-tone-saffron-bg border-saffron-300 text-saffron-800 dark:text-saffron-400',
 };
 
 function StandardNode({ data }: NodeProps<FlowNode>) {
@@ -51,11 +51,11 @@ function StandardNode({ data }: NodeProps<FlowNode>) {
         data.dim && 'opacity-30',
       )}
     >
-      <Handle type="target" position={Position.Left} className="!bg-navy-300 !border-0 !size-2" />
+      <Handle type="target" position={Position.Left} className="!bg-primary/50 !border-0 !size-2" />
       <div className={cx('text-[12px] font-semibold font-mono truncate', data.kind === 'product' && 'font-sans text-[13px]')}>{data.label}</div>
-      {data.sublabel && <div className={cx('mt-0.5 text-[10.5px] leading-snug line-clamp-2', data.kind === 'product' ? 'text-navy-100' : 'text-ink-muted')}>{data.sublabel}</div>}
+      {data.sublabel && <div className={cx('mt-0.5 text-[10.5px] leading-snug line-clamp-2', data.kind === 'product' ? 'text-primary-fg/80' : 'text-ink-muted')}>{data.sublabel}</div>}
       {data.kind !== 'product' && data.category && <div className="mt-1 text-[9.5px] uppercase tracking-wide text-ink-muted">{data.category.replace('-', ' ')}</div>}
-      <Handle type="source" position={Position.Right} className="!bg-navy-300 !border-0 !size-2" />
+      <Handle type="source" position={Position.Right} className="!bg-primary/50 !border-0 !size-2" />
     </div>
   );
 }

@@ -19,8 +19,8 @@ import {
   ShieldAlert,
   Sparkles,
   Sun,
-  Upload,
   X,
+  Settings,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
@@ -28,6 +28,9 @@ import { useTheme, type ThemePreference } from '@/context/ThemeContext';
 import { Badge, Button, cx } from '@/components/ui';
 import { CopilotPanel } from '@/components/analysis/CopilotPanel';
 import { CommandMenu } from '@/components/CommandMenu';
+import { useLanguage } from '@/context/LanguageContext';
+import { LanguageToggle } from '@/components/ui/LanguageToggle';
+import { IndiaMap } from '@/components/ui/IndiaMap';
 
 interface NavItem {
   to: string;
@@ -37,21 +40,24 @@ interface NavItem {
 }
 
 const WORKFLOW: NavItem[] = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/analyze', label: 'Analyze Specification', icon: FileSearch },
-  { to: '/upload', label: 'Upload Tender', icon: Upload },
-  { to: '/results', label: 'Recommendations', icon: ListChecks },
-  { to: '/gaps', label: 'Gap Analysis', icon: ShieldAlert },
-  { to: '/spec', label: 'Tender Specification', icon: FileText },
+  { to: '/', label: 'nav.dashboard', icon: LayoutDashboard, end: true },
+  { to: '/analyze', label: 'nav.analyze', icon: FileSearch },
+  { to: '/explorer', label: 'nav.explorer', icon: BookOpenText },
+  { to: '/history', label: 'nav.history', icon: Clock3 },
+  { to: '/reports', label: 'nav.reports', icon: FileText },
 ];
 
 const KNOWLEDGE: NavItem[] = [
-  { to: '/explorer', label: 'Standards Explorer', icon: BookOpenText },
-  { to: '/graph', label: 'Relationship Graph', icon: GitFork },
-  { to: '/history', label: 'Search History', icon: Clock3 },
+  { to: '/results', label: 'nav.recommendations', icon: ListChecks },
+  { to: '/gaps', label: 'nav.gaps', icon: ShieldAlert },
+  { to: '/spec', label: 'nav.spec', icon: FileText },
+  { to: '/graph', label: 'nav.graph', icon: GitFork },
 ];
 
-const SECONDARY: NavItem[] = [{ to: '/about', label: 'About', icon: Info }];
+const SECONDARY: NavItem[] = [
+  { to: '/about', label: 'nav.about', icon: Info },
+  { to: '/settings', label: 'nav.settings', icon: Settings },
+];
 
 /** Page titles for the header breadcrumb, keyed by route prefix. */
 const TITLES: Array<[string, string]> = [
@@ -63,13 +69,16 @@ const TITLES: Array<[string, string]> = [
   ['/gaps', 'Gap Analysis'],
   ['/spec', 'Tender Specification'],
   ['/history', 'Search History'],
+  ['/reports', 'Reports'],
   ['/about', 'About'],
+  ['/settings', 'Settings'],
 ];
 
 const COLLAPSE_KEY = 'iscopilot.sidebar.collapsed';
 
 export function AppShell() {
   const { status, statusError, analysis } = useApp();
+  const { t } = useLanguage();
   const { pathname } = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => {
@@ -85,7 +94,19 @@ export function AppShell() {
   const pageTitle = useMemo(() => TITLES.find(([prefix]) => pathname.startsWith(prefix))?.[1] ?? 'Dashboard', [pathname]);
 
   // Close the mobile drawer whenever the route changes.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMobileOpen(false), [pathname]);
+
+  // Match the desktop overlays: the mobile drawer is dismissible by keyboard
+  // and exposes its modal state to assistive technology.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileOpen]);
 
   // Ctrl/⌘ + K opens the command menu from anywhere.
   useEffect(() => {
@@ -112,30 +133,57 @@ export function AppShell() {
   };
 
   const sidebar = (mini: boolean) => (
-    <nav className="flex h-full flex-col bg-sidebar text-sidebar-fg" aria-label="Main navigation">
-      <div className={cx('flex items-center gap-2.5 border-b border-sidebar-border px-4 h-14', mini && 'justify-center px-0')}>
-        <div className="grid size-8 shrink-0 place-items-center rounded-lg bg-white/10 ring-1 ring-white/15">
-          <span className="font-mono text-[12px] font-bold text-white">IS</span>
-        </div>
+    <nav className="flex h-full flex-col border-r border-sidebar-border bg-sidebar text-sidebar-fg" aria-label="Main navigation">
+      <div className={cx('flex items-center gap-2.5 border-b border-sidebar-border px-4 py-4', mini && 'justify-center px-0')}>
+        <img 
+          src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" 
+          alt="Government of India Emblem" 
+          className={cx("shrink-0 mix-blend-multiply opacity-90 dark:opacity-80 dark:invert", mini ? "h-8 w-auto" : "h-11 w-auto")} 
+        />
         {!mini && (
           <div className="min-w-0">
-            <div className="truncate text-[14px] font-semibold leading-tight">IS Copilot</div>
-            <div className="truncate text-[10.5px] leading-tight text-sidebar-muted">Indian Standards. Smarter Procurement.</div>
+            <div className="truncate text-[15.5px] font-extrabold leading-tight tracking-[-0.02em] text-sidebar-fg">IS Copilot</div>
+            <div className="mt-0.5 text-[9.5px] font-medium leading-tight tracking-[0.01em] text-sidebar-muted whitespace-normal">Indian Standards. Smarter Procurement.</div>
           </div>
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2.5 py-3">
-        <NavGroup label="Workflow" items={WORKFLOW} mini={mini} analysisReady={Boolean(analysis)} />
-        <NavGroup label="Knowledge Base" items={KNOWLEDGE} mini={mini} className="mt-4" />
+      <div className="flex-1 overflow-y-auto px-2 py-3">
+        <NavGroup label={t('nav.workflow')} items={WORKFLOW} mini={mini} analysisReady={Boolean(analysis)} t={t} />
+        <NavGroup label={t('nav.knowledge')} items={KNOWLEDGE} mini={mini} className="mt-4" t={t} />
       </div>
 
-      <div className="border-t border-sidebar-border px-2.5 py-3">
-        <NavGroup items={SECONDARY} mini={mini} />
+      <div className="mt-auto border-t border-sidebar-border px-2 py-3">
+        <NavGroup items={SECONDARY} mini={mini} t={t} />
         {!mini && (
-          <div className="mt-3 px-2.5 text-[10.5px] leading-relaxed text-sidebar-muted">
-            <div className="font-semibold text-white/80">SIH 2026 · PS 26108</div>
-            <div className="mt-0.5">AI assistance — not a legal authority. Verify with BIS.</div>
+          <div className="mt-4 mx-2 mb-2 relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-100 to-slate-50 p-3.5 shadow-sm border border-slate-200/60 dark:from-sidebar-accent dark:to-sidebar dark:border-sidebar-border">
+            {/* Map Background */}
+            <div className="absolute right-0 -bottom-1 pointer-events-none opacity-20 dark:opacity-25">
+              <img src="/india-map.png" alt="India Map" className="w-24 h-24 object-contain object-right-bottom mix-blend-multiply dark:mix-blend-lighten" />
+            </div>
+            
+            <div className="relative z-10">
+              <div className="text-[11px] font-semibold leading-tight text-slate-800 dark:text-slate-200">
+                Standardizing <br /> for a Stronger India
+              </div>
+              <div className="mt-2 text-[10px] font-bold italic tracking-wide">
+                <span className="text-orange-500">in</span><span className="text-blue-600 dark:text-blue-400">d</span><span className="text-green-600">ia</span>
+              </div>
+              <div className="mt-1 flex items-center gap-1.5">
+                <div className="flex h-3 w-4.5 flex-col overflow-hidden rounded-[2px] border border-black/15 shadow-sm">
+                  <div className="h-1 w-full bg-[#FF9933]" />
+                  <div className="flex h-1 w-full items-center justify-center bg-white">
+                    <div className="size-[3px] rounded-full bg-[#000080]" />
+                  </div>
+                  <div className="h-1 w-full bg-[#138808]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {!mini && (
+          <div className="px-3 pt-1 text-[10.5px] font-medium text-sidebar-muted/80">
+            © 2026 IS Copilot
           </div>
         )}
       </div>
@@ -149,12 +197,12 @@ export function AppShell() {
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
           <button aria-label="Close navigation" className="absolute inset-0 bg-black/50 animate-fade-in" onClick={() => setMobileOpen(false)} />
           <aside className="absolute inset-y-0 left-0 w-[264px] shadow-pop animate-[fade-in_0.2s_ease-out]">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute right-2 top-3.5 z-10 grid size-8 place-items-center rounded-md text-sidebar-muted hover:bg-white/10 hover:text-white"
+              className="absolute right-2 top-3.5 z-10 grid size-8 place-items-center rounded-md text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-fg"
               aria-label="Close navigation"
             >
               <X className="size-4" />
@@ -165,7 +213,7 @@ export function AppShell() {
       )}
 
       <div className="flex min-h-screen min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-line bg-surface-raised/85 px-3 backdrop-blur md:px-6 print:hidden">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-line bg-surface-raised/95 px-3 backdrop-blur-xl md:px-7 print:hidden">
           <button
             className="grid size-9 place-items-center rounded-lg text-ink-muted hover:bg-soft hover:text-ink lg:hidden"
             onClick={() => setMobileOpen(true)}
@@ -189,7 +237,7 @@ export function AppShell() {
             <span className="hidden text-ink-subtle sm:inline" aria-hidden>
               /
             </span>
-            <span className="truncate text-[13.5px] font-semibold text-ink" aria-current="page">
+            <span className="truncate text-[13.5px] font-bold tracking-[-0.015em] text-ink" aria-current="page">
               {pageTitle}
             </span>
           </div>
@@ -201,8 +249,8 @@ export function AppShell() {
               aria-label="Open command menu"
             >
               <Search className="size-3.5" />
-              <span>Search…</span>
-              <kbd className="rounded border border-line bg-surface-raised px-1 font-mono text-[10px]">⌘K</kbd>
+              <span>{t('action.search')}</span>
+              <kbd className="rounded border border-line bg-surface-raised px-1 font-mono text-[10px]">Ctrl+K</kbd>
             </button>
             <button
               onClick={() => setCommandOpen(true)}
@@ -214,14 +262,15 @@ export function AppShell() {
 
             <StatusPill status={status} error={statusError} />
             <ThemeToggle />
+            <LanguageToggle />
 
             <Button size="sm" onClick={() => setCopilot(true)} className="ml-0.5">
-              <Sparkles className="size-4" /> <span className="hidden sm:inline">Ask Copilot</span>
+              <Sparkles className="size-4" /> <span className="hidden sm:inline">{t('action.askCopilot')}</span>
             </Button>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 md:px-8 md:py-8">
+        <main className="app-canvas mx-auto w-full max-w-[1440px] flex-1 px-4 py-7 md:px-10 md:py-10">
           <Outlet />
         </main>
       </div>
@@ -238,16 +287,18 @@ function NavGroup({
   mini,
   className,
   analysisReady,
+  t,
 }: {
   label?: string;
   items: NavItem[];
   mini: boolean;
   className?: string;
   analysisReady?: boolean;
+  t: (key: string) => string;
 }) {
   return (
     <div className={className}>
-      {label && !mini && <div className="px-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-sidebar-muted">{label}</div>}
+      {label && !mini && <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.13em] text-sidebar-muted">{label}</div>}
       {label && mini && <div className="mx-auto mb-2 h-px w-6 bg-sidebar-border" />}
       <ul className="space-y-0.5">
         {items.map((n) => (
@@ -255,21 +306,21 @@ function NavGroup({
             <NavLink
               to={n.to}
               end={n.end}
-              title={mini ? n.label : undefined}
+              title={mini ? t(n.label) : undefined}
               className={({ isActive }) =>
                 cx(
-                  'group relative flex items-center gap-2.5 rounded-lg text-[13px] font-medium transition-colors',
-                  mini ? 'justify-center px-0 py-2.5' : 'px-2.5 py-2',
-                  isActive ? 'bg-white/[0.14] text-white' : 'text-sidebar-muted hover:bg-white/[0.07] hover:text-white',
+                  'group relative flex items-center gap-2.5 rounded-xl text-[13px] font-semibold tracking-[-0.005em] transition-colors',
+                  mini ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5',
+                  isActive ? 'bg-sidebar-accent text-sidebar-accent-fg' : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-fg',
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  {isActive && <span className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-accent" aria-hidden />}
+                  {isActive && <span className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-primary" aria-hidden />}
                   <n.icon className="size-4 shrink-0" />
-                  {!mini && <span className="truncate">{n.label}</span>}
-                  {!mini && n.to === '/results' && analysisReady && <span className="ml-auto size-1.5 rounded-full bg-accent" aria-hidden title="Analysis loaded" />}
+                  {!mini && <span className="truncate">{t(n.label)}</span>}
+                  {!mini && n.to === '/results' && analysisReady && <span className="ml-auto size-1.5 rounded-full bg-primary" aria-hidden title="Analysis loaded" />}
                 </>
               )}
             </NavLink>

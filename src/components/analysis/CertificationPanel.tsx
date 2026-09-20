@@ -21,7 +21,7 @@ export function CertificationPanel({ items, primaryIds, onOpenStandard }: { item
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <button onClick={() => onOpenStandard(c.standardId)} className="font-mono font-semibold text-navy-800 hover:underline">
+                <button onClick={() => onOpenStandard(c.standardId)} className="font-mono font-semibold text-ink hover:underline">
                   {c.standardNumber}
                 </button>
                 <Badge tone={TONE[c.applicability]}>{APPLICABILITY_LABELS[c.applicability]}</Badge>

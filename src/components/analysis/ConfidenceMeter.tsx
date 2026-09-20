@@ -4,7 +4,7 @@ import { cx } from '@/components/ui';
 
 const BAND_STYLE = {
   'very-high': { bar: 'bg-emerald-500', text: 'text-emerald-700', ring: 'ring-emerald-200 bg-emerald-50' },
-  high: { bar: 'bg-navy-500', text: 'text-navy-700', ring: 'ring-navy-200 bg-navy-50' },
+  high: { bar: 'bg-primary', text: 'text-ink', ring: 'ring-primary/20 bg-primary/5' },
   medium: { bar: 'bg-amber-500', text: 'text-amber-800', ring: 'ring-amber-200 bg-amber-50' },
   low: { bar: 'bg-slate-400', text: 'text-slate-600', ring: 'ring-slate-200 bg-slate-100' },
 } as const;
@@ -52,7 +52,7 @@ export function ConfidenceMeter({ c, showBreakdown = false }: { c: ConfidenceBre
                 <span className="font-mono">{Math.round(c[key] * 100)}%</span>
               </div>
               <div className="mt-0.5 h-1 rounded-full bg-slate-100">
-                <div className="h-full rounded-full bg-navy-400" style={{ width: `${c[key] * 100}%` }} />
+                <div className="h-full rounded-full bg-primary/60" style={{ width: `${c[key] * 100}%` }} />
               </div>
             </li>
           ))}
