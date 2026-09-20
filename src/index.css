@@ -1,11 +1,20 @@
 @import 'tailwindcss';
 @import '@xyflow/react/dist/style.css';
 
+/* Class-based dark mode (toggled on <html> by the theme provider). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   IS Copilot design system
+   Minimal enterprise / government-tech. Every colour below is a CSS variable so
+   the dark theme can re-map semantics instead of inverting them.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Brand: deep navy primary, saffron accent, slate neutrals */
+  /* Brand ramps — fixed reference values, used for charts, graph edges and marks. */
   --color-navy-50: #eef2f9;
   --color-navy-100: #d8e0f0;
   --color-navy-200: #b3c2e0;
@@ -26,25 +35,100 @@
   --color-saffron-600: #c75f1c;
   --color-saffron-700: #9e4a14;
 
+  /* ── Semantic surfaces ── */
   --color-surface: #f6f8fb;
   --color-surface-raised: #ffffff;
-  --color-ink: #0f172a;
-  --color-ink-muted: #475569;
-  --color-line: #e2e8f0;
+  --color-surface-sunken: #f1f4f9;
+  --color-surface-overlay: #ffffff;
+
+  /* ── Semantic text ── */
+  --color-ink: #0b1220;
+  --color-ink-muted: #56657e;
+  --color-ink-subtle: #7b8aa3;
+  --color-ink-inverse: #ffffff;
+
+  /* ── Lines ── */
+  --color-line: #e3e8ef;
+  --color-line-strong: #cdd5e0;
+
+  /* ── Interactive ── */
+  --color-primary: #0b2545;
+  --color-primary-hover: #142d5e;
+  --color-primary-fg: #ffffff;
+  --color-primary-ring: #4d6ba8;
+
+  --color-accent: #e8772e;
+  --color-accent-hover: #c75f1c;
+  --color-accent-fg: #ffffff;
+
+  /* Subtle tinted surface used for icon chips, active rows, inline highlights. */
+  --color-soft: #eef2f9;
+  --color-soft-hover: #e3eaf6;
+  --color-soft-fg: #142d5e;
+
+  /* Neutral muted surface used for meter tracks and inert chips. */
+  --color-muted: #eef1f6;
+  --color-muted-fg: #56657e;
+
+  /* ── Sidebar ── */
+  --color-sidebar: #071a33;
+  --color-sidebar-fg: #ffffff;
+  --color-sidebar-muted: #93a7c4;
+  --color-sidebar-hover: #0f2140;
+  --color-sidebar-border: #14294a;
+
+  /* ── Badge / status tones (bg · fg · ring) ── */
+  --color-tone-navy-bg: #eef2f9;
+  --color-tone-navy-fg: #142d5e;
+  --color-tone-navy-ring: #c6d3ea;
+
+  --color-tone-saffron-bg: #fff5eb;
+  --color-tone-saffron-fg: #9e4a14;
+  --color-tone-saffron-ring: #ffcb99;
+
+  --color-tone-emerald-bg: #ecfdf5;
+  --color-tone-emerald-fg: #047857;
+  --color-tone-emerald-ring: #a7f3d0;
+
+  --color-tone-amber-bg: #fffbeb;
+  --color-tone-amber-fg: #92400e;
+  --color-tone-amber-ring: #fde68a;
+
+  --color-tone-rose-bg: #fff1f2;
+  --color-tone-rose-fg: #be123c;
+  --color-tone-rose-ring: #fecdd3;
+
+  --color-tone-slate-bg: #f1f5f9;
+  --color-tone-slate-fg: #475569;
+  --color-tone-slate-ring: #dbe3ec;
+
+  --color-tone-sky-bg: #f0f9ff;
+  --color-tone-sky-fg: #0369a1;
+  --color-tone-sky-ring: #bae6fd;
+
+  --color-tone-violet-bg: #f5f3ff;
+  --color-tone-violet-fg: #6d28d9;
+  --color-tone-violet-ring: #ddd6fe;
+
+  /* ── Signal colours (bars, icons, graph) ── */
+  --color-signal-ok: #059669;
+  --color-signal-warn: #d97706;
+  --color-signal-risk: #e11d48;
+  --color-signal-info: #2a4a8a;
 
   --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
   --shadow-card-hover: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 4px rgb(15 23 42 / 0.05);
   --shadow-pop: 0 12px 32px rgb(15 23 42 / 0.16);
 
-  --radius-card: 14px;
+  --radius-card: 12px;
 
-  --animate-fade-up: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-fade-in: fade-in 0.25s ease-out both;
+  --animate-fade-up: fade-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.2s ease-out both;
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
   --animate-shimmer: shimmer 1.6s linear infinite;
 
   @keyframes fade-up {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
   }
   @keyframes fade-in {
@@ -61,9 +145,92 @@
   }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dark theme — semantics are re-mapped, not inverted.
+   ───────────────────────────────────────────────────────────────────────────── */
+.dark {
+  --color-surface: #0a0e15;
+  --color-surface-raised: #111722;
+  --color-surface-sunken: #0d131d;
+  --color-surface-overlay: #151c28;
+
+  --color-ink: #e7edf6;
+  --color-ink-muted: #94a3b8;
+  --color-ink-subtle: #75839a;
+  --color-ink-inverse: #0a0e15;
+
+  --color-line: #222c3a;
+  --color-line-strong: #33404f;
+
+  --color-primary: #3f6fc4;
+  --color-primary-hover: #4d7fd6;
+  --color-primary-fg: #ffffff;
+  --color-primary-ring: #7f97c6;
+
+  --color-accent: #e8772e;
+  --color-accent-hover: #f7902f;
+  --color-accent-fg: #14100a;
+
+  --color-soft: #16202f;
+  --color-soft-hover: #1c283a;
+  --color-soft-fg: #a8c1e8;
+
+  --color-muted: #1a2332;
+  --color-muted-fg: #94a3b8;
+
+  --color-sidebar: #080c13;
+  --color-sidebar-fg: #f1f5fb;
+  --color-sidebar-muted: #8494ad;
+  --color-sidebar-border: #1c2635;
+
+  --color-tone-navy-bg: #14203a;
+  --color-tone-navy-fg: #a8c1e8;
+  --color-tone-navy-ring: #23375c;
+
+  --color-tone-saffron-bg: #2a1a0c;
+  --color-tone-saffron-fg: #f7b276;
+  --color-tone-saffron-ring: #4a2d12;
+
+  --color-tone-emerald-bg: #08231a;
+  --color-tone-emerald-fg: #6ee7b7;
+  --color-tone-emerald-ring: #14503a;
+
+  --color-tone-amber-bg: #251a06;
+  --color-tone-amber-fg: #fcd34d;
+  --color-tone-amber-ring: #4a3510;
+
+  --color-tone-rose-bg: #2a0f16;
+  --color-tone-rose-fg: #fda4af;
+  --color-tone-rose-ring: #55202c;
+
+  --color-tone-slate-bg: #1a2332;
+  --color-tone-slate-fg: #b3c0d1;
+  --color-tone-slate-ring: #2c3949;
+
+  --color-tone-sky-bg: #07202e;
+  --color-tone-sky-fg: #7dd3fc;
+  --color-tone-sky-ring: #144863;
+
+  --color-tone-violet-bg: #1c1533;
+  --color-tone-violet-fg: #c4b5fd;
+  --color-tone-violet-ring: #37285e;
+
+  --color-signal-ok: #34d399;
+  --color-signal-warn: #fbbf24;
+  --color-signal-risk: #fb7185;
+  --color-signal-info: #7f97c6;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 1px 3px rgb(0 0 0 / 0.3);
+  --shadow-card-hover: 0 4px 14px rgb(0 0 0 / 0.5), 0 2px 5px rgb(0 0 0 / 0.35);
+  --shadow-pop: 0 16px 40px rgb(0 0 0 / 0.6);
+}
+
 @layer base {
   :root {
     color-scheme: light;
+  }
+  .dark {
+    color-scheme: dark;
   }
   html {
     -webkit-font-smoothing: antialiased;
@@ -73,7 +240,7 @@
     @apply bg-surface text-ink font-sans text-[14px] leading-relaxed;
   }
   ::selection {
-    @apply bg-navy-200 text-navy-900;
+    @apply bg-soft text-soft-fg;
   }
   h1, h2, h3, h4 {
     @apply font-semibold tracking-tight text-ink;
@@ -82,7 +249,14 @@
     cursor: pointer;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-navy-400 ring-offset-2 ring-offset-surface;
+    @apply outline-none ring-2 ring-primary-ring ring-offset-2 ring-offset-surface;
+  }
+  /* Form controls inherit the theme rather than the user-agent light default. */
+  input, textarea, select {
+    color-scheme: inherit;
+  }
+  ::placeholder {
+    @apply text-ink-subtle;
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -97,23 +271,29 @@
     @apply bg-surface-raised border border-line rounded-card shadow-card;
   }
   .card-hover {
-    @apply transition-all duration-200 hover:shadow-card-hover hover:border-navy-200 hover:-translate-y-px;
+    @apply transition-all duration-200 hover:shadow-card-hover hover:border-line-strong hover:-translate-y-px;
   }
   .label-caps {
     @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-muted;
   }
+  /* Shared field styling so inputs, selects and textareas stay consistent. */
+  .field {
+    @apply w-full rounded-lg border border-line bg-surface-sunken text-ink outline-none transition-colors
+           focus:border-primary-ring focus:bg-surface-raised;
+  }
   .skeleton {
-    @apply rounded-md bg-[linear-gradient(90deg,#eef1f6_0%,#e2e8f0_50%,#eef1f6_100%)] bg-[length:200%_100%] animate-shimmer;
+    @apply rounded-md bg-muted bg-[length:200%_100%] animate-shimmer;
+    background-image: linear-gradient(90deg, var(--color-muted) 0%, var(--color-line) 50%, var(--color-muted) 100%);
   }
   .prose-lite p { @apply mb-2; }
   .prose-lite ul { @apply list-disc pl-5 mb-2 space-y-1; }
   .prose-lite strong { @apply font-semibold text-ink; }
   .prose-lite h2 { @apply text-base font-semibold mt-4 mb-2; }
   .prose-lite h3 { @apply text-sm font-semibold mt-3 mb-1; }
-  .prose-lite code { @apply font-mono text-[12px] bg-navy-50 px-1 py-0.5 rounded; }
+  .prose-lite code { @apply font-mono text-[12px] bg-soft text-soft-fg px-1 py-0.5 rounded; }
 }
 
-/* React Flow theming */
+/* ── React Flow theming (light + dark) ───────────────────────────────────── */
 .react-flow__attribution { display: none; }
 .react-flow__controls {
   box-shadow: var(--shadow-card) !important;
@@ -122,12 +302,28 @@
   overflow: hidden;
 }
 .react-flow__controls button {
-  background: #fff !important;
+  background: var(--color-surface-raised) !important;
   border-bottom: 1px solid var(--color-line) !important;
   color: var(--color-ink) !important;
+  fill: var(--color-ink) !important;
 }
+.react-flow__controls button:hover {
+  background: var(--color-soft) !important;
+}
+.react-flow__controls button path { fill: currentColor; }
 .react-flow__edge-path { stroke-width: 1.5; }
-.react-flow__edge.selected .react-flow__edge-path { stroke: var(--color-saffron-500) !important; stroke-width: 2.5; }
-.react-flow__edge-textbg { fill: #fff; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: var(--color-accent) !important; stroke-width: 2.5; }
+.react-flow__edge-textbg { fill: var(--color-surface-raised); }
 .react-flow__edge-text { font-size: 10px; fill: var(--color-ink-muted); font-family: var(--font-sans); }
-.react-flow__minimap { border-radius: 10px; border: 1px solid var(--color-line); }
+.react-flow__minimap {
+  border-radius: 10px;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface-sunken) !important;
+}
+.react-flow__minimap-mask { fill: color-mix(in oklab, var(--color-surface) 70%, transparent); }
+
+/* ── Print: report/spec output should render as a clean document ─────────── */
+@media print {
+  .print\:hidden { display: none !important; }
+  body { background: #fff; }
+}
