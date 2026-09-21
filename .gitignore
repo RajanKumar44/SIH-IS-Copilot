@@ -29,6 +29,7 @@ yarn-error.log*
 *.tsbuildinfo
 uploads/
 tmp/
+scratch/
 
 # OS / editor
 .DS_Store

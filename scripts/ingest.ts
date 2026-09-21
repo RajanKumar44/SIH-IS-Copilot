@@ -12,9 +12,29 @@
  * CSV columns (header row): id,number,title,category,sector,productTypes,scope,keywords,year,status
  * (list columns are `;`-separated).
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
+
+// Auto-load .env when run directly via tsx
+try {
+  const envPath = resolve(process.cwd(), '.env');
+  if (existsSync(envPath)) {
+    const lines = readFileSync(envPath, 'utf8').split(/\r?\n/);
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+      const eqIdx = trimmed.indexOf('=');
+      if (eqIdx > 0) {
+        const k = trimmed.slice(0, eqIdx).trim();
+        const v = trimmed.slice(eqIdx + 1).trim();
+        if (!process.env[k]) process.env[k] = v;
+      }
+    }
+  }
+} catch {
+  // ignore
+}
 import { normalizeDataset, standardEmbeddingText, type RawDatasetInput, type RawStandardRecord } from '../src/engine/repository/normalize';
 import { LocalEmbeddingProvider } from '../src/engine/providers/localEmbedding';
 import type { EmbeddingProvider } from '../src/engine/providers/types';
@@ -130,8 +150,8 @@ async function main() {
     return;
   }
   const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required (or pass --dry-run).');
+  const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('SUPABASE_URL and SUPABASE_SECRET_KEY (or SUPABASE_SERVICE_ROLE_KEY) are required (or pass --dry-run).');
   const supa = createClient(url, key, { auth: { persistSession: false } });
   const fail = (label: string, error: { message: string } | null) => {
     if (error) throw new Error(`${label}: ${error.message}`);
@@ -182,7 +202,9 @@ async function main() {
   for (let i = 0; i < dataset.standards.length; i += BATCH) {
     const slice = dataset.standards.slice(i, i + BATCH);
     const texts = slice.map(standardEmbeddingText);
-    const vectors = await embeddings.embed(texts);
+    const vectors = (await embeddings.embed(texts)).map((v) =>
+      v.length === 1536 ? v : v.length < 1536 ? v.concat(new Array(1536 - v.length).fill(0)) : v.slice(0, 1536),
+    );
     fail(
       'standard_embeddings',
       (

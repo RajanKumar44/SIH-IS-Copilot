@@ -135,8 +135,10 @@ export class SupabaseStandardsRepository implements StandardsRepository {
   }
 
   async searchByVector(embedding: number[], opts: VectorSearchOptions = {}): Promise<VectorHit[]> {
+    const q =
+      embedding.length === 1536 ? embedding : embedding.length < 1536 ? embedding.concat(new Array(1536 - embedding.length).fill(0)) : embedding.slice(0, 1536);
     const { data, error } = await this.client.rpc('match_standards_ranked', {
-      query_embedding: embedding,
+      query_embedding: q,
       match_count: opts.topK ?? 12,
       filter_sector: opts.sector ?? null,
       filter_category: opts.category ?? null,

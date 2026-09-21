@@ -50,6 +50,12 @@ async function buildContext(): Promise<ServerContext> {
         const { OpenAILLMProvider } = await import('../src/engine/providers/openai');
         llm = new OpenAILLMProvider(env.OPENAI_API_KEY, env.OPENAI_MODEL || 'gpt-4o-mini');
       }
+    } else if (aiProvider === 'groq') {
+      if (!env.GROQ_API_KEY) warnings.push('AI_PROVIDER=groq but GROQ_API_KEY is missing — using demo provider.');
+      else {
+        const { OpenAILLMProvider } = await import('../src/engine/providers/openai');
+        llm = new OpenAILLMProvider(env.GROQ_API_KEY, env.GROQ_MODEL || 'openai/gpt-oss-120b', 'https://api.groq.com/openai/v1');
+      }
     } else if (aiProvider !== 'demo') {
       warnings.push(`Unknown AI_PROVIDER "${aiProvider}" — using demo provider.`);
     }
@@ -62,13 +68,7 @@ async function buildContext(): Promise<ServerContext> {
   let embeddings: EmbeddingProvider = new LocalEmbeddingProvider();
   const embProvider = (env.EMBEDDING_PROVIDER ?? 'local').toLowerCase();
   try {
-    if (embProvider === 'openai') {
-      if (!env.OPENAI_API_KEY) warnings.push('EMBEDDING_PROVIDER=openai but OPENAI_API_KEY is missing — using local embeddings.');
-      else {
-        const { OpenAIEmbeddingProvider } = await import('../src/engine/providers/openai');
-        embeddings = new OpenAIEmbeddingProvider(env.OPENAI_API_KEY, env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small');
-      }
-    } else if (embProvider === 'voyage') {
+    if (embProvider === 'voyage') {
       if (!env.VOYAGE_API_KEY) warnings.push('EMBEDDING_PROVIDER=voyage but VOYAGE_API_KEY is missing — using local embeddings.');
       else {
         const { VoyageEmbeddingProvider } = await import('../src/engine/providers/openai');
@@ -82,10 +82,11 @@ async function buildContext(): Promise<ServerContext> {
 
   // ── Repository ──
   let repo: StandardsRepository;
-  if (env.SUPABASE_URL && env.SUPABASE_SERVICE_ROLE_KEY) {
+  const supaKey = env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY;
+  if (env.SUPABASE_URL && supaKey) {
     try {
       const { SupabaseStandardsRepository } = await import('../src/engine/repository/supabaseRepository');
-      const supa = new SupabaseStandardsRepository(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+      const supa = new SupabaseStandardsRepository(env.SUPABASE_URL, supaKey);
       const info = await supa.datasetInfo();
       if (info.standardCount === 0) {
         warnings.push('Supabase is configured but the standards table is empty — using the in-memory demo dataset. Run `npm run ingest`.');

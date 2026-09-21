@@ -410,18 +410,34 @@
   }
   .results-bento {
     display: grid;
-    gap: 16px;
+    gap: 18px;
   }
   .results-metrics {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
-  .results-metrics > :last-child { grid-column: span 2; }
+  .results-metrics > :last-child {
+    grid-column: span 2;
+  }
   @media (min-width: 1024px) {
-    .results-bento { grid-template-columns: minmax(0, 1.75fr) minmax(300px, 0.85fr); align-items: stretch; }
-    .results-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr)); }
-    .results-metrics > :last-child { grid-column: span 2; }
+    .results-bento {
+      grid-template-columns: minmax(0, 1.36fr) minmax(360px, 0.95fr);
+      align-items: start;
+    }
+    .results-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .results-metrics > :last-child {
+      grid-column: span 2;
+    }
+  }
+  @media (min-width: 1400px) {
+    .results-bento {
+      grid-template-columns: minmax(0, 1.45fr) minmax(400px, 1fr);
+      gap: 20px;
+    }
   }
   @media (max-width: 639px) {
     .page-heading { padding: 15px; border-radius: 13px; }

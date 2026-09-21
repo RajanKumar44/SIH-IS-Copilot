@@ -22,7 +22,7 @@ export function buildExplanation(
   if (s.productTypes.length) reasons.push(`Indexed product types: ${s.productTypes.slice(0, 3).join(', ')}`);
   const byType = new Map<string, number>();
   for (const r of relationships) byType.set(r.type, (byType.get(r.type) ?? 0) + 1);
-  if (byType.size) reasons.push(`Connected to ${relationships.length} indexed standard(s): ${[...byType.entries()].map(([t, n]) => `${n} ${RELATIONSHIP_LABELS[t as keyof typeof RELATIONSHIP_LABELS].toLowerCase()}`).join(', ')}`);
+  if (byType.size) reasons.push(`Connected to ${relationships.length} indexed standard(s): ${[...byType.entries()].map(([t, n]) => `${n} ${(RELATIONSHIP_LABELS[t as keyof typeof RELATIONSHIP_LABELS] ?? t.replace(/_/g, ' ')).toLowerCase()}`).join(', ')}`);
   const certs = certifications.filter((c) => c.standardId === s.id);
   if (certs.length) reasons.push(`Indexed certification mapping: ${certs.map((c) => c.certification.scheme).join(', ')}`);
   for (const r of ranked.providerReasons) if (!reasons.includes(r)) reasons.push(r);

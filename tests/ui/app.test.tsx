@@ -90,7 +90,7 @@ describe('IS Copilot UI', () => {
   it('runs the judge demo flow: analyze → results → certification → gaps → graph → spec → history', async () => {
     await renderAt('/');
     await user.click(screen.getByRole('link', { name: /Start an analysis/ }));
-    await user.click(screen.getByText('LED street lighting'));
+    await user.click(screen.getByText(/LED street lighting/i));
     const textarea = screen.getByLabelText(/Describe the product/) as HTMLTextAreaElement;
     expect(textarea.value).toMatch(/LED street lighting system/);
     await user.click(screen.getByRole('button', { name: /Analyze Standards/ }));
@@ -171,10 +171,10 @@ describe('IS Copilot UI', () => {
 
   it('explorer searches, filters and opens details', async () => {
     await renderAt('/explorer');
-    expect(await screen.findByText('IS 269')).toBeInTheDocument();
+    expect(await screen.findByText('IS 73')).toBeInTheDocument();
     await user.type(screen.getByLabelText('Search standards'), 'xlpe');
     expect(await screen.findByText('IS 7098 (Part 1)')).toBeInTheDocument();
-    await waitFor(() => expect(screen.queryByText('IS 269')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText('IS 73')).not.toBeInTheDocument());
     await user.click(screen.getByText('IS 7098 (Part 1)'));
     expect((await screen.findAllByText(/Crosslinked polyethylene/)).length).toBeGreaterThan(1);
     expect(await screen.findByText('Relationships')).toBeInTheDocument();

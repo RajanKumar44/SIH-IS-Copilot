@@ -54,7 +54,7 @@ export function buildRouter(): Router {
       dataset: info,
       warnings: ctx.warnings,
       maxUploadMb: ctx.maxUploadMb,
-      persistence: Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+      persistence: Boolean(process.env.SUPABASE_URL && (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)),
     });
   });
 

@@ -103,6 +103,8 @@
     { "from": "is-13252-1", "to": "is-16046-2", "type": "related_product", "note": "Batteries in portable IT equipment" },
     { "from": "is-13252-1", "to": "is-616", "type": "related_product" },
     { "from": "is-13252-1", "to": "is-1293", "type": "related_product", "note": "Plugs and sockets" },
-    { "from": "is-616", "to": "is-13252-1", "type": "related_product" }
+    { "from": "is-616", "to": "is-13252-1", "type": "related_product" },
+    { "from": "is-3312", "to": "is-2062", "type": "normative_reference", "note": "Steel sheets and sections" },
+    { "from": "is-3312", "to": "is-513", "type": "normative_reference", "note": "Cold rolled low carbon steel sheets and strips" }
   ]
 }

@@ -115,17 +115,43 @@ export function extractRequirements(text: string): Requirement[] {
 }
 
 export function mergeRequirements(base: Requirement[], extra: Requirement[]): Requirement[] {
-  const keys = new Set(base.map((r) => `${r.category}|${(r.value ?? r.text).toLowerCase()}`));
-  const merged = [...base];
-  let n = base.length;
-  for (const r of extra) {
+  const aiProducts = extra.filter((r) => r.category === 'product');
+  const otherExtra = extra.filter((r) => r.category !== 'product');
+
+  const merged: Requirement[] = [];
+  const keys = new Set<string>();
+
+  // 1. AI-extracted products take highest precedence
+  for (const r of aiProducts) {
+    const key = `${r.category}|${(r.value ?? r.text).toLowerCase()}`;
+    if (!keys.has(key)) {
+      keys.add(key);
+      merged.push({ ...r, id: `req-${merged.length + 1}` });
+    }
+  }
+
+  // 2. Base requirements (drop rule-based product guesses if AI already identified the product)
+  for (const r of base) {
+    if (aiProducts.length > 0 && r.category === 'product') {
+      const matchesAi = aiProducts.some((a) => similarText(a.text, r.text));
+      if (!matchesAi) continue;
+    }
     const key = `${r.category}|${(r.value ?? r.text).toLowerCase()}`;
     if (keys.has(key)) continue;
-    const textDup = base.some((b) => similarText(b.text, r.text));
-    if (textDup) continue;
+    if (merged.some((m) => similarText(m.text, r.text))) continue;
     keys.add(key);
-    merged.push({ ...r, id: `req-${++n}` });
+    merged.push({ ...r, id: `req-${merged.length + 1}` });
   }
+
+  // 3. Other extra (LLM non-product requirements)
+  for (const r of otherExtra) {
+    const key = `${r.category}|${(r.value ?? r.text).toLowerCase()}`;
+    if (keys.has(key)) continue;
+    if (merged.some((m) => similarText(m.text, r.text))) continue;
+    keys.add(key);
+    merged.push({ ...r, id: `req-${merged.length + 1}` });
+  }
+
   return merged;
 }
 

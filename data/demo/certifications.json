@@ -54,6 +54,7 @@
     { "standardId": "is-12615", "certificationId": "bis-isi", "applicability": "indexed-voluntary", "evidence": "Demo index records IE-class induction motors (IS 12615) as eligible for voluntary ISI certification; mandatory status not recorded in this index." },
     { "standardId": "is-8034", "certificationId": "bis-isi", "applicability": "indexed-voluntary", "evidence": "Demo index records submersible pumpsets (IS 8034) as eligible for voluntary ISI certification; mandatory status not recorded in this index." },
     { "standardId": "is-4985", "certificationId": "bis-isi", "applicability": "indexed-voluntary", "evidence": "Demo index records uPVC pipes (IS 4985) as eligible for voluntary ISI certification; mandatory status not recorded in this index." },
+    { "standardId": "is-3312", "certificationId": "bis-isi", "applicability": "indexed-voluntary", "evidence": "Demo index records steel shelving cabinets (IS 3312) as eligible for voluntary ISI certification." },
     { "standardId": "is-1417", "certificationId": "bis-hallmarking", "applicability": "indexed-mandatory", "evidence": "Demo index records gold jewellery fineness (IS 1417) as the basis for mandatory hallmarking of gold jewellery in notified districts." }
   ]
 }

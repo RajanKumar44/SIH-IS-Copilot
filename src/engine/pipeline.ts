@@ -64,8 +64,8 @@ export async function analyze(req: AnalyzeRequest, deps: EngineDeps): Promise<An
   if (ai.llm.isLive) {
     try {
       requirements = mergeRequirements(requirements, await ai.llm.extractRequirements(normalized));
-    } catch {
-      /* rule-based only */
+    } catch (err) {
+      console.warn('Live LLM requirement extraction failed, fell back to rules:', err);
     }
   }
   t('requirements', t0);
@@ -200,7 +200,7 @@ export async function analyze(req: AnalyzeRequest, deps: EngineDeps): Promise<An
 
 function describeProduct(requirements: AnalysisResult['requirements'], original: string): string {
   const products = requirements.filter((r) => r.category === 'product').map((r) => r.text.replace(/^Product: /, ''));
-  if (products.length) return products.slice(0, 2).join(' / ');
+  if (products.length) return products[0];
   const firstLine = original.split('\n')[0].trim();
   return firstLine.length > 80 ? `${firstLine.slice(0, 77)}…` : firstLine || 'Procurement item';
 }

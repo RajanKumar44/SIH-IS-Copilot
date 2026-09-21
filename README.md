@@ -195,11 +195,11 @@ Copy `.env.example` to `.env` (never commit `.env`). All variables are **server-
 
 | Variable | Values / default | Notes |
 |---|---|---|
-| `AI_PROVIDER` | `demo` (default) · `anthropic` · `openai` | LLM for reranking, extraction, translation, spec refinement, chat |
+| `AI_PROVIDER` | `demo` (default) · `anthropic` · `openai` · `groq` | LLM for reranking, extraction, translation, spec refinement, chat |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | — · `claude-opus-5` | used when `AI_PROVIDER=anthropic` |
-| `OPENAI_API_KEY`, `OPENAI_MODEL` | — · `gpt-4o-mini` | used when `AI_PROVIDER=openai` and/or `EMBEDDING_PROVIDER=openai` |
-| `EMBEDDING_PROVIDER` | `local` (default) · `openai` · `voyage` | must match the pgvector column dimension when Supabase is used |
-| `OPENAI_EMBEDDING_MODEL` | `text-embedding-3-small` (1536 d) | |
+| `OPENAI_API_KEY`, `OPENAI_MODEL` | — · `gpt-4o-mini` | used when `AI_PROVIDER=openai` |
+| `GROQ_API_KEY`, `GROQ_MODEL` | — · `llama-3.3-70b-versatile` | used when `AI_PROVIDER=groq` |
+| `EMBEDDING_PROVIDER` | `local` (default) · `voyage` | must match the pgvector column dimension when Supabase is used |
 | `VOYAGE_API_KEY`, `VOYAGE_EMBEDDING_MODEL` | — · `voyage-3-lite` (512 d) | |
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | — | enables the Supabase repository + persistence; **service-role key is server-only** |
 | `MAX_UPLOAD_MB` | `10` | PDF size limit |

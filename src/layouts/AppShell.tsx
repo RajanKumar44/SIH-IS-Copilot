@@ -30,7 +30,6 @@ import { CopilotPanel } from '@/components/analysis/CopilotPanel';
 import { CommandMenu } from '@/components/CommandMenu';
 import { useLanguage } from '@/context/LanguageContext';
 import { LanguageToggle } from '@/components/ui/LanguageToggle';
-import { IndiaMap } from '@/components/ui/IndiaMap';
 
 interface NavItem {
   to: string;

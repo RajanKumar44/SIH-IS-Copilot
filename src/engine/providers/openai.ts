@@ -81,34 +81,6 @@ export class OpenAILLMProvider implements LLMProvider {
   }
 }
 
-export class OpenAIEmbeddingProvider implements EmbeddingProvider {
-  readonly name = 'openai';
-  readonly dimensions: number;
-
-  constructor(
-    private readonly apiKey: string,
-    readonly model = 'text-embedding-3-small',
-    private readonly baseUrl = 'https://api.openai.com/v1',
-  ) {
-    if (!apiKey) throw new AIProviderError('OPENAI_API_KEY is not set', 'missing-key');
-    this.dimensions = model.includes('large') ? 3072 : 1536;
-  }
-
-  async embed(texts: string[]): Promise<number[][]> {
-    if (!texts.length) return [];
-    const res = await fetch(`${this.baseUrl}/embeddings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.apiKey}` },
-      body: JSON.stringify({ model: this.model, input: texts }),
-    }).catch(() => {
-      throw new AIProviderError('Could not reach the OpenAI embeddings API', 'unavailable');
-    });
-    if (res.status === 429) throw new AIProviderError('OpenAI rate limit reached', 'rate-limit');
-    if (!res.ok) throw new AIProviderError(`OpenAI embeddings error (${res.status})`, 'unavailable');
-    const data = (await res.json()) as { data: Array<{ index: number; embedding: number[] }> };
-    return data.data.sort((a, b) => a.index - b.index).map((d) => d.embedding);
-  }
-}
 
 export class VoyageEmbeddingProvider implements EmbeddingProvider {
   readonly name = 'voyage';
@@ -137,3 +109,32 @@ export class VoyageEmbeddingProvider implements EmbeddingProvider {
     return data.data.sort((a, b) => a.index - b.index).map((d) => d.embedding);
   }
 }
+
+export class OpenAIEmbeddingProvider implements EmbeddingProvider {
+  readonly name = 'openai';
+  readonly dimensions: number;
+
+  constructor(
+    private readonly apiKey: string,
+    readonly model = 'text-embedding-3-small',
+  ) {
+    if (!apiKey) throw new AIProviderError('OPENAI_API_KEY is not set', 'missing-key');
+    this.dimensions = model.includes('large') ? 3072 : 1536;
+  }
+
+  async embed(texts: string[]): Promise<number[][]> {
+    if (!texts.length) return [];
+    const res = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${this.apiKey}` },
+      body: JSON.stringify({ model: this.model, input: texts }),
+    }).catch(() => {
+      throw new AIProviderError('Could not reach the OpenAI API', 'unavailable');
+    });
+    if (res.status === 429) throw new AIProviderError('OpenAI rate limit reached', 'rate-limit');
+    if (!res.ok) throw new AIProviderError(`OpenAI embeddings error (${res.status})`, 'unavailable');
+    const data = (await res.json()) as { data: Array<{ index: number; embedding: number[] }> };
+    return data.data.sort((a, b) => a.index - b.index).map((d) => d.embedding);
+  }
+}
+
